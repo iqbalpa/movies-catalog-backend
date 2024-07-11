@@ -26,7 +26,7 @@ export class MoviesController {
     @Request() request,
     @Body() dto: CreateMovieDto,
   ): Promise<Movie> {
-    return this.moviesService.createMovie(dto, request);
+    return this.moviesService.createMovie(request, dto);
   }
 
   @UseGuards(AuthGuard)

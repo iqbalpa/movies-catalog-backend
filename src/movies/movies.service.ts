@@ -1,5 +1,5 @@
 import { Injectable, Request } from '@nestjs/common';
-import { Movie, User } from '@prisma/client';
+import { Movie } from '@prisma/client';
 import prisma from 'src/utils/prisma/prisma';
 import { CreateMovieDto } from './dto/create-movie.dto';
 
@@ -12,8 +12,6 @@ export class MoviesService {
 
   async createMovie(@Request() request, dto: CreateMovieDto): Promise<Movie> {
     const user = request['user'];
-    console.log('this is movie service');
-    console.log(request['user']);
     const movie: Movie = await prisma.movie.create({
       data: {
         ...dto,
