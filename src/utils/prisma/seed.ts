@@ -1,10 +1,55 @@
 import prisma from './prisma';
 import { PasswordHelper } from '../hash/password-hash.helper';
+import { Movie } from '@prisma/client';
+
 interface User {
   name: string;
   email: string;
   password: string;
 }
+
+const movies: Movie[] = [
+  {
+    id: 1,
+    title: 'Inception',
+    overview:
+      'A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.',
+    release_date: '2010-07-16',
+    userId: 1,
+  },
+  {
+    id: 2,
+    title: 'The Matrix',
+    overview:
+      'A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.',
+    release_date: '1999-03-31',
+    userId: 2,
+  },
+  {
+    id: 3,
+    title: 'Interstellar',
+    overview:
+      "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
+    release_date: '2014-11-07',
+    userId: 1,
+  },
+  {
+    id: 4,
+    title: 'The Dark Knight',
+    overview:
+      'When the menace known as the Joker emerges from his mysterious past, he wreaks havoc and chaos on the people of Gotham.',
+    release_date: '2008-07-18',
+    userId: 3,
+  },
+  {
+    id: 5,
+    title: 'Fight Club',
+    overview:
+      'An insomniac office worker and a devil-may-care soap maker form an underground fight club that evolves into something much, much more.',
+    release_date: '1999-10-15',
+    userId: 2,
+  },
+];
 
 const users: User[] = [
   {
@@ -266,6 +311,11 @@ const seed = async (users: User[]) => {
         ...user,
         password: hashedPass,
       },
+    });
+  }
+  for (let movie of movies) {
+    await prisma.movie.create({
+      data: movie,
     });
   }
 };
