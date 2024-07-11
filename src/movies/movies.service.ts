@@ -12,6 +12,8 @@ export class MoviesService {
 
   async createMovie(@Request() request, dto: CreateMovieDto): Promise<Movie> {
     const user = request['user'];
+    console.log('this is movie service');
+    console.log(request['user']);
     const movie: Movie = await prisma.movie.create({
       data: {
         ...dto,
@@ -19,5 +21,15 @@ export class MoviesService {
       },
     });
     return movie;
+  }
+
+  async getUserMovies(@Request() request): Promise<Movie[]> {
+    const user = request['user'];
+    const movies: Movie[] = await prisma.movie.findMany({
+      where: {
+        userId: user.id,
+      },
+    });
+    return movies;
   }
 }
