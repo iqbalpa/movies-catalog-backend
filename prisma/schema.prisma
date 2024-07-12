@@ -26,6 +26,7 @@ model Movie {
   title         String  
   overview      String
   release_date  String
+  poster_path   String    @default("")
 
   userId        Int
   user          User      @relation(fields: [userId], references: [id])
