@@ -22,7 +22,7 @@ model User {
 }
 
 model Movie {
-  id            Int       @id   // the id will be retrieved from TMDB API
+  id            Int       // the id will be retrieved from TMDB API
   title         String  
   overview      String
   release_date  String
@@ -30,4 +30,6 @@ model Movie {
 
   userId        Int
   user          User      @relation(fields: [userId], references: [id])
+
+  @@unique([userId, id])
 }
