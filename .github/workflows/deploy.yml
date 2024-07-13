@@ -1,31 +1,44 @@
 name: Deploy to Google Cloud VM
 
 on:
-  pull_request:
+  push:
     branches:
       - master
 
 jobs:
   deploy:
+    needs: build-and-push
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
 
-      - name: Set up Docker Compose
+    steps:
+      - name: Set up gcloud CLI
+        uses: google-github-actions/setup-gcloud@v0.3.0
+        with:
+          project_id: ${{ secrets.GCE_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCE_SA_KEY }}
+          export_default_credentials: true
+
+      - name: Access gcloud CLI
         run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
+          gcloud auth configure-docker
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
 
-      - name: Deploy to Google Cloud VM
+      - name: Copy docker-compose.yml to Google Cloud VM
+        run: |
+          scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.GCP_USER }}@${{ secrets.GCP_VM_IP }}:/home/iqbalpahlevi07/movies-catalog-backend/docker-compose.yml
+
+      - name: SSH into Google Cloud VM and deploy Docker Compose
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.GCP_USER }}@${{ secrets.GCP_VM_IP }} << EOF
-            docker compose -f ./docker-compose.yml down
-            docker compose -f ./docker-compose.yml pull
-            docker compose -f ./docker-compose.yml up -d
+            cd /home/iqbalpahlevi07/movies-catalog-backend
+            docker-compose down
+            docker-compose pull
+            docker-compose up -d
           EOF
