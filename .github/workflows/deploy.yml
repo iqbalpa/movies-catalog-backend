@@ -25,7 +25,7 @@ jobs:
       - name: Deploy to Google Cloud VM
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.GCP_USER }}@${{ secrets.GCP_VM_IP }} << EOF
-            docker-compose -f ./docker-compose.yml down
-            docker-compose -f ./docker-compose.yml pull
-            docker-compose -f ./docker-compose.yml up -d
+            docker compose -f ./docker-compose.yml down
+            docker compose -f ./docker-compose.yml pull
+            docker compose -f ./docker-compose.yml up -d
           EOF
