@@ -1,7 +1,5 @@
-# YAML configuration file for Docker Compose version 3.8
 version: '3.8'
 
-# Define services
 services:
   # Database service using PostgreSQL image
   database:
