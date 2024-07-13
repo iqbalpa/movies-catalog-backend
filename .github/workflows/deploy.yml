@@ -57,13 +57,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Copy docker-compose.yml into GCP Instance
-        uses: appleboy/scp-action@master
+        uses: garygrossgarten/github-action-scp@release
         with:
+          local: docker-compose.yml
+          remote: /home/${{ secrets.GCP_USER }}/docker-compose.yml
           host: ${{ secrets.GCP_VM_IP }}
           username: ${{ secrets.GCP_USER }}
-          key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
-          source: 'docker-compose.yml'
-          target: '/home/${{ secrets.GCP_USER }}'
+          privateKey: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
 
       - name: SSH into GCP and Run Docker Container
         uses: appleboy/ssh-action@master
