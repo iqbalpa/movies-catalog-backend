@@ -1,4 +1,4 @@
-name: Deploy to GCP with Docker Compose
+name: Build and Push Docker Image to Docker Hub
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  publish:
+  build-and-push:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
