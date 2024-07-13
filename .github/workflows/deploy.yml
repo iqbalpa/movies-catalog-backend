@@ -3,7 +3,7 @@ name: Deploy to GCP with Docker Compose
 on:
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   publish:
