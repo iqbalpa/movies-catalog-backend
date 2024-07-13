@@ -18,6 +18,7 @@ services:
   # Backend service
   backend:
     build: . # Build the Docker image using the Dockerfile in the current directory
+    image: iqbalpa/backend-movies:latest
     ports:
       - '3000:3000' # Forward the container's port 3333 to the host machine's port 3333 for accessing the backend service
     depends_on:
