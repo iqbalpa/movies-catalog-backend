@@ -1,4 +1,4 @@
-name: Deploy to GCP with Docker Compose
+name: Deploy to Google Cloud VM
 
 on:
   pull_request:
@@ -6,26 +6,21 @@ on:
       - master
 
 jobs:
-  publish:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Docker Hub Authentication
-        uses: docker/login-action@v1
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          ssh-private-key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Build Docker Image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}:latest .
-
-      - name: Tag Docker Image
-        run: docker tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}:latest ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}:latest
-
-      - name: Push Docker Image to Docker Hub
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}:latest
+      - name: Deploy to Google Cloud VM
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.GCP_USER }}@${{ secrets.GCP_VM_IP }} << EOF
+            docker-compose -f ./docker-compose.yml down
+            docker-compose -f ./docker-compose.yml pull
+            docker-compose -f ./docker-compose.yml up -d
+          EOF
