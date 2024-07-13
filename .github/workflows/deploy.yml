@@ -73,6 +73,7 @@ jobs:
           key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
           script: |
             echo "DATABASE_URL=postgresql://${{ vars.DATABASE_USERNAME }}:${{ vars.DATABASE_PASSWORD }}@${{ vars.DATABASE_HOST }}:5432/${{ vars.DATABASE_NAME }}?schema=public" >> .env
+            sed -i -e 's/iqbalpa\/backend-movies/${{ secrets.DOCKERHUB_USERNAME }}\/${{ vars.DOCKER_IMAGE_NAME }}/g' docker-compose.yml
             docker compose -f /home/${{ secrets.GCP_USER }}/docker-compose.yml down
             docker compose -f /home/${{ secrets.GCP_USER }}/docker-compose.yml up --pull always -d
             docker image prune -f -a
