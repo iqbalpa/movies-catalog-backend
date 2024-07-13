@@ -56,14 +56,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Copy docker-compose.yml into GCP Instance
-        uses: garygrossgarten/github-action-scp@release
-        with:
-          local: docker-compose.yml
-          remote: /home/${{ secrets.GCP_USER }}/docker-compose.yml
-          host: ${{ secrets.GCP_VM_IP }}
-          username: ${{ secrets.GCP_USER }}
-          privateKey: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
+      # - name: Copy docker-compose.yml into GCP Instance
+      #   uses: garygrossgarten/github-action-scp@release
+      #   with:
+      #     local: docker-compose.yml
+      #     remote: /home/${{ secrets.GCP_USER }}/docker-compose.yml
+      #     host: ${{ secrets.GCP_VM_IP }}
+      #     username: ${{ secrets.GCP_USER }}
+      #     privateKey: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
 
       - name: SSH into GCP and Run Docker Container
         uses: appleboy/ssh-action@master
@@ -72,6 +72,35 @@ jobs:
           username: ${{ secrets.GCP_USER }}
           key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
           script: |
+            cat > /home/${{ secrets.GCP_USER }}/env. <<EOF
+            DATABASE_URL="postgresql://postgres:iqbalpahlevi@database:5432/movies_catalog?schema=public"
+            EOF
+            cat > /home/${{ secrets.GCP_USER }}/docker-compose.yml <<EOF
+            version: '3.8'
+            services:
+              database:
+                image: postgres:latest
+                environment:
+                  POSTGRES_DB: movies_catalog
+                  POSTGRES_USER: postgres
+                  POSTGRES_PASSWORD: iqbalpahlevi
+                ports:
+                  - '5432:5432'
+                volumes:
+                  - database:/var/lib/postgresql/data
+              backend:
+                build: .
+                image: ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}:latest
+                ports:
+                  - '3000:3000'
+                depends_on:
+                  - database
+                env_file:
+                  - .env
+            volumes:
+              database:
+                name: movies-catalog-db
+            EOF
             docker compose -f /home/${{ secrets.GCP_USER }}/docker-compose.yml down
             docker compose -f /home/${{ secrets.GCP_USER }}/docker-compose.yml up --pull always -d
             docker image prune -f -a
