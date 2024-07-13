@@ -12,6 +12,8 @@ services:
       POSTGRES_PASSWORD: iqbalpahlevi # Define the password for the user
     ports:
       - '5432:5432' # Forward the container's port 5432 to the host machine's port 5432 for accessing PostgreSQL
+    volumes:
+      - database:/var/lib/postgresql/data
 
   # Backend service
   backend:
@@ -22,3 +24,7 @@ services:
       - database # Ensure that the backend service starts after the database service is up and running
     env_file:
       - .env
+
+volumes:
+  database:
+    name: movies-catalog-db
