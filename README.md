@@ -8,6 +8,9 @@ Visit the website [here](https://iqbalpa-movies-catalog.vercel.app/)
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
 
+## Demo Video
+https://github.com/user-attachments/assets/564bb4d3-2e84-4dd5-a108-02037dd8282c
+
 ## Features
 1. Authentication (signup and signin)
 2. Movies catalog
