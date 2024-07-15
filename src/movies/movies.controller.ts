@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
+  ParseIntPipe,
   Post,
   Request,
   UseGuards,
@@ -33,5 +36,14 @@ export class MoviesController {
   @Get('watchlist')
   async getUserMovies(@Request() request): Promise<Movie[]> {
     return this.moviesService.getUserMovies(request);
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete('watchlist/:movieId')
+  async deleteMovieFromWatchlist(
+    @Request() request: Request,
+    @Param('movieId', ParseIntPipe) movieId: number,
+  ): Promise<Movie> {
+    return this.moviesService.deleteMovieFromWatchlist(request, movieId);
   }
 }
