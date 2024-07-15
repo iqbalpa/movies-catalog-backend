@@ -30,4 +30,20 @@ export class MoviesService {
     });
     return movies;
   }
+
+  async deleteMovieFromWatchlist(
+    @Request() request,
+    movieId: number,
+  ): Promise<Movie> {
+    const user = request['user'];
+    const movie: Movie = await prisma.movie.delete({
+      where: {
+        userId_id: {
+          userId: user.id,
+          id: movieId,
+        },
+      },
+    });
+    return movie;
+  }
 }
